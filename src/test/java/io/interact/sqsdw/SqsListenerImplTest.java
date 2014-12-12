@@ -21,13 +21,13 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 
 /**
- * Tests {@link SqsListener} lifecycle scenario's.
+ * Tests {@link SqsListenerImpl} lifecycle scenario's.
  * 
  * @author Bas Cancrinus
  */
-public class SqsListenerTest {
+public class SqsListenerImplTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SqsListenerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SqsListenerImplTest.class);
 
     private static final String TEST_QUEUE_URL = "test-queue-url";
 
@@ -37,12 +37,12 @@ public class SqsListenerTest {
     @Mock
     private MessageHandler handler;
 
-    private SqsListener fixture;
+    private SqsListenerImpl fixture;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        fixture = new SqsListener(sqs, TEST_QUEUE_URL, handler);
+        fixture = new SqsListenerImpl(sqs, TEST_QUEUE_URL, handler);
     }
 
     @Test

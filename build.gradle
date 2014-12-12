@@ -24,6 +24,7 @@ dependencies {
     compile "io.dropwizard:dropwizard-logging:${dropwizardVersion}"
     compile "io.dropwizard:dropwizard-validation:${dropwizardVersion}"
     compile "io.dropwizard:dropwizard-client:${dropwizardVersion}"
+    compile 'com.google.inject:guice:3.0'
  
     compile "ch.qos.logback:logback-classic:$logbackVersion"
     compile "ch.qos.logback:logback-core:$logbackVersion"

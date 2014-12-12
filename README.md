@@ -65,7 +65,8 @@ public class MessageHandlerImpl implements MessageHandler {
 }
 ````
 
-- Register the queue listener in the run() method of your application class:
+- Register the queue listener in the run() method of your application class
+(you can inject the constructor arguments into an SqsListenerImpl instance with Guice):
 
 ````java
     @Override
@@ -74,7 +75,7 @@ public class MessageHandlerImpl implements MessageHandler {
 
         final MessageHandler handler = ...
 
-        final SqsListener sqsListener = new SqsListener(sqs, conf.getSqsListenQueueUrl(), handler);
+        final SqsListener sqsListener = new SqsListenerImpl(sqs, conf.getSqsListenQueueUrl(), handler);
 
         env.lifecycle().manage(sqsListener);
         env.healthChecks().register("SqsListener", new SqsListenerHealthCheck(sqsListener));
