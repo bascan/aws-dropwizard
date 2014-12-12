@@ -68,7 +68,12 @@ public class SqsListener implements Managed {
                         for (int i = 0; i < messages.size(); i++) {
                             Message msg = messages.get(i);
                             LOG.debug(String.format("Processing message %s of %s...", i + 1, messages.size()));
-                            handler.handle(msg);
+                            try {
+                                handler.handle(msg);
+                            } catch (Exception e) {
+                                logProcessingError(msg, e);
+                            }
+
                             String messageRecieptHandle = msg.getReceiptHandle();
                             sqs.deleteMessage(new DeleteMessageRequest(queueUrl, messageRecieptHandle));
                             LOG.debug(String.format("Message %s of %s is processed and deleted from queue '%s'", i + 1,
@@ -80,7 +85,7 @@ public class SqsListener implements Managed {
                             LOG.info(String.format("Queue '%s' recovered from error condition", queueUrl));
                         }
                     } catch (AmazonClientException ace) {
-                        handleError(ace);
+                        handleQueueError(ace);
                     }
                 }
                 LOG.info(interruptedMsg);
@@ -89,7 +94,13 @@ public class SqsListener implements Managed {
         pollingThread.start();
     }
 
-    private void handleError(AmazonClientException ace) {
+    private void logProcessingError(Message msg, Exception e) {
+        LOG.error("An error occurred while processing the following message:" + "\n\tMessageId:     " + msg.getMessageId()
+                + "\n\tReceiptHandle: " + msg.getReceiptHandle() + "\n\tMD5OfBody:     " + msg.getMD5OfBody()
+                + "\n\tBody:          " + msg.getBody(), e);
+    }
+
+    private void handleQueueError(AmazonClientException ace) {
         boolean firstAttempt = healthy.compareAndSet(true, false);
         String errorMsg = "An error occurred while listening to '%s', waiting '%s' ms before retrying...";
         if (!firstAttempt) {
