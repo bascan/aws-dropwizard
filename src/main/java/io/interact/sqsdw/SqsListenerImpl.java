@@ -12,6 +12,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -104,12 +105,15 @@ public class SqsListenerImpl implements SqsListener {
     }
 
     private void logProcessingError(Message msg, Exception e) {
-        LOG.error("An error occurred while processing the following message:" + "\n\tMessageId:     " + msg.getMessageId()
-                + "\n\tReceiptHandle: " + msg.getReceiptHandle() + "\n\tMD5OfBody:     " + msg.getMD5OfBody()
-                + "\n\tBody:          " + msg.getBody(), e);
-        for (Entry<String, String> entry : msg.getAttributes().entrySet()) {
-            LOG.debug("\n\tAttribute" + "\n\t\tName:  " + entry.getKey() + "\n\t\tValue: " + entry.getValue());
+        StringBuilder builder = new StringBuilder().append("An error occurred while processing the following message:")
+                .append("\n\tMessageId:     ").append(msg.getMessageId()).append("\n\tReceiptHandle: ")
+                .append(msg.getReceiptHandle()).append("\n\tMD5OfBody:     ").append(msg.getMD5OfBody())
+                .append("\n\tBody:          ").append(msg.getBody());
+
+        for (Entry<String, MessageAttributeValue> entry : msg.getMessageAttributes().entrySet()) {
+            builder.append("\n\tAttribute" + "\n\t\tName:  " + entry.getKey() + "\n\t\tValue: " + entry.getValue());
         }
+        LOG.error(builder.toString(), e);
     }
 
     private void handleQueueError(AmazonClientException ace) {
