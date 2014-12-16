@@ -48,7 +48,8 @@ sqsListenQueueUrl: https://sqs...
     }
 ````
 
-- Implement the MessageHandler interface and process the messages that you expect to receive in the handle() method:
+- Implement the MessageHandler interface and process the messages that you expect to receive in the handle() method
+(you can register multiple MessageHandler instances with the queue listener):
 
 ````java
 package ...;
@@ -75,7 +76,10 @@ public class MessageHandlerImpl implements MessageHandler {
 
         final MessageHandler handler = ...
 
-        final SqsListener sqsListener = new SqsListenerImpl(sqs, conf.getSqsListenQueueUrl(), handler);
+        final Set<MessageHandler> handlers = new HashSet<>();
+        handlers.add(handler);
+        
+        final SqsListener sqsListener = new SqsListenerImpl(sqs, conf.getSqsListenQueueUrl(), handlers);
 
         env.lifecycle().manage(sqsListener);
         env.healthChecks().register("SqsListener", new SqsListenerHealthCheck(sqsListener));

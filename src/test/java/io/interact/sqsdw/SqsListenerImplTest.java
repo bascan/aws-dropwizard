@@ -5,7 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +44,9 @@ public class SqsListenerImplTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        fixture = new SqsListenerImpl(sqs, TEST_QUEUE_URL, handler);
+        Set<MessageHandler> handlers = new HashSet<>();
+        handlers.add(handler);
+        fixture = new SqsListenerImpl(sqs, TEST_QUEUE_URL, handlers);
     }
 
     @Test
