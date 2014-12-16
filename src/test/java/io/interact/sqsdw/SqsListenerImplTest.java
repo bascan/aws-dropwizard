@@ -29,6 +29,8 @@ import com.amazonaws.services.sqs.model.ReceiveMessageResult;
  */
 public class SqsListenerImplTest {
 
+    private static final int WAIT = 500;
+
     private static final Logger LOG = LoggerFactory.getLogger(SqsListenerImplTest.class);
 
     private static final String TEST_QUEUE_URL = "test-queue-url";
@@ -65,7 +67,7 @@ public class SqsListenerImplTest {
         when(sqs.receiveMessage(receiveMessageRequest)).thenThrow(new AmazonClientException(TEST_QUEUE_URL));
 
         fixture.start();
-        Thread.sleep(500);
+        Thread.sleep(WAIT);
         assertFalse(fixture.isHealthy());
         fixture.stop();
     }
@@ -77,14 +79,16 @@ public class SqsListenerImplTest {
         List<Message> messages = new ArrayList<>();
         messages.add(new Message());
         messages.add(new Message());
-        ReceiveMessageRequest request = new ReceiveMessageRequest(TEST_QUEUE_URL);
+        ReceiveMessageRequest request = new ReceiveMessageRequest(TEST_QUEUE_URL)
+                .withMessageAttributeNames(MessageHandler.MESSAGE_TYPE);
+        ;
         ReceiveMessageResult result = new ReceiveMessageResult();
         result.setMessages(messages);
 
         when(sqs.receiveMessage(request)).thenReturn(result);
 
         fixture.start();
-        Thread.sleep(500);
+        Thread.sleep(WAIT);
         assertTrue(fixture.isHealthy());
         fixture.stop();
     }

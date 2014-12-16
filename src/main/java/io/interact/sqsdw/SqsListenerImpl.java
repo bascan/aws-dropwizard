@@ -8,7 +8,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
@@ -94,8 +93,8 @@ public class SqsListenerImpl implements SqsListener {
                         if (recovered) {
                             LOG.info(String.format("Queue '%s' recovered from error condition", sqsListenQueueUrl));
                         }
-                    } catch (AmazonClientException ace) {
-                        handleQueueError(ace);
+                    } catch (Exception e) {
+                        handleQueueError(e);
                     }
                 }
                 LOG.info(interruptedMsg);
@@ -116,13 +115,13 @@ public class SqsListenerImpl implements SqsListener {
         LOG.error(builder.toString(), e);
     }
 
-    private void handleQueueError(AmazonClientException ace) {
+    private void handleQueueError(Exception e) {
         boolean firstAttempt = healthy.compareAndSet(true, false);
         String errorMsg = "An error occurred while listening to '%s', waiting '%s' ms before retrying...";
         if (!firstAttempt) {
             errorMsg = "Retry failed while listening to '%s', waiting '%s' ms before retrying...";
         }
-        LOG.error(String.format(errorMsg, sqsListenQueueUrl, SLEEP_ON_ERROR), ace);
+        LOG.error(String.format(errorMsg, sqsListenQueueUrl, SLEEP_ON_ERROR), e);
         try {
             Thread.sleep(SLEEP_ON_ERROR);
         } catch (InterruptedException ie) {
