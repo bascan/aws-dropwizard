@@ -48,7 +48,7 @@ sqsListenQueueUrl: https://sqs...
     }
 ````
 
-- Implement the MessageHandler interface and process the messages that you expect to receive in the handle() method
+- Extend the MessageHandler class and process the messages that you expect to receive in the handle() method
 (you can register multiple MessageHandler instances with the queue listener):
 
 ````java
@@ -56,9 +56,12 @@ package ...;
 
 import io.interact.sqsdw.MessageHandler;
 
-public class MessageHandlerImpl implements MessageHandler {
+public class MessageHandlerImpl extends MessageHandler {
 
-    @Override
+	public MessageHandlerImpl() {
+        super("MyMessageType");
+    }
+
     public void handle(Message message) {
 		// Message processing here.
     }
@@ -86,4 +89,14 @@ public class MessageHandlerImpl implements MessageHandler {
     }
 ````
 
-That's it! You'll have an extra health check called "SqsListener" that monitors the health of your queue.
+- Send messages to SQS from your client with the MessageDispatcher helper class:
+````java
+MessageDispatcher.dispatch(yourData, queueUrl, "MyMessageType", sqs);
+````
+
+That's it!
+
+Dispatched messages of type "MyMessageType" will be handled by your MessageHandlerImpl class now.
+You can loosely couple clients and message handlers by using several message types in your application(s).
+
+You'll now have an extra health check called "SqsListener" that monitors the health of your queue.
