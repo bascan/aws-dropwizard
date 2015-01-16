@@ -34,8 +34,8 @@ public class MessageDispatcher {
 
     private static Map<String, MessageAttributeValue> prepareMessageAttributes(String messageType) {
         Map<String, MessageAttributeValue> messageAttributes = new HashMap<>();
-        messageAttributes.put(MessageHandler.MESSAGE_TYPE,
-                new MessageAttributeValue().withDataType("String").withStringValue(messageType));
+        messageAttributes.put(MessageHandler.ATTR_MESSAGE_TYPE, new MessageAttributeValue().withDataType("String")
+                .withStringValue(messageType));
         return messageAttributes;
     }
 

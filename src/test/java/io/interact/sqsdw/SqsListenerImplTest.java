@@ -80,7 +80,7 @@ public class SqsListenerImplTest {
         messages.add(new Message());
         messages.add(new Message());
         ReceiveMessageRequest request = new ReceiveMessageRequest(TEST_QUEUE_URL)
-                .withMessageAttributeNames(MessageHandler.MESSAGE_TYPE);
+                .withMessageAttributeNames(MessageHandler.ATTR_MESSAGE_TYPE);
         ;
         ReceiveMessageResult result = new ReceiveMessageResult();
         result.setMessages(messages);

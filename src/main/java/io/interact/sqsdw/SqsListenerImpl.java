@@ -69,7 +69,7 @@ public class SqsListenerImpl implements SqsListener {
                 while (!isInterrupted()) {
                     try {
                         ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(sqsListenQueueUrl)
-                                .withMessageAttributeNames(MessageHandler.MESSAGE_TYPE);
+                                .withMessageAttributeNames(MessageHandler.ATTR_MESSAGE_TYPE);
                         List<Message> messages = sqs.receiveMessage(receiveMessageRequest).getMessages();
                         for (int i = 0; i < messages.size(); i++) {
                             Message msg = messages.get(i);
@@ -77,7 +77,12 @@ public class SqsListenerImpl implements SqsListener {
                             try {
                                 for (MessageHandler handler : handlers) {
                                     LOG.debug("Calling message handler: " + handler);
-                                    handler.handle(msg);
+                                    if (handler.canHandle(msg)) {
+                                        LOG.debug("Message accepted.");
+                                        handler.handle(msg);
+                                    } else {
+                                        LOG.debug("Message refused.");
+                                    }
                                 }
                             } catch (Exception e) {
                                 logProcessingError(msg, e);
