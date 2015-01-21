@@ -1,11 +1,75 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
+apply plugin: 'signing'
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-version = '0.1-SNAPSHOT'
+group = "io.interact"
+archivesBaseName = "sqs-dropwizard"
+version = '1.0'
+
+uploadArchives {
+    repositories {
+      mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+  
+        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+  
+        snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+          authentication(userName: ossrhUsername, password: ossrhPassword)
+        }
+  
+        pom.project {
+          name 'sqs-dropwizard'
+          packaging 'jar'
+          description 'sqs-dropwizard is a utility library that integrates the Amazon SQS offering with the Dropwizard REST framework. It contains convenience classes for sending messages to - and receiving from - SQS queues while being managed by the Dropwizard framework.'
+          url 'https://github.com/bascan/sqs-dropwizard'
+  
+          scm {
+            connection 'scm:git:https://github.com/bascan/sqs-dropwizard.git'
+            developerConnection 'scm:git:https://github.com/bascan/sqs-dropwizard.git'
+            url 'https://github.com/bascan/sqs-dropwizard.git'
+          }
+  
+          licenses {
+            license {
+              name 'The Apache License, Version 2.0'
+              url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            }
+          }
+  
+          developers {
+            developer {
+              id 'bascan'
+              name 'Bas Cancrinus'
+            }
+          }
+        }
+      }
+    }
+  }
 
 repositories {
     mavenCentral()
