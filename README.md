@@ -1,4 +1,5 @@
 # sqs-dropwizard
+Latest release on Maven Central: <http://search.maven.org/#browse%7C1558661453>
 
 ## Introduction
 

@@ -26,9 +26,11 @@ targetCompatibility = 1.7
 
 group = "io.interact"
 archivesBaseName = "sqs-dropwizard"
-version = '1.0'
+version = '1.0.1'
 
-/*
+def ossrhUsername = hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+def ossrhPassword = hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+
 uploadArchives {
     repositories {
       mavenDeployer {
@@ -71,7 +73,7 @@ uploadArchives {
       }
     }
   }
-*/
+
 repositories {
     mavenCentral()
 }
