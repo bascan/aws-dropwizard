@@ -28,6 +28,7 @@ group = "io.interact"
 archivesBaseName = "sqs-dropwizard"
 version = '1.0'
 
+/*
 uploadArchives {
     repositories {
       mavenDeployer {
@@ -70,7 +71,7 @@ uploadArchives {
       }
     }
   }
-
+*/
 repositories {
     mavenCentral()
 }
