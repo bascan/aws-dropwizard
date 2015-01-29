@@ -19,7 +19,7 @@ public class MessageHandlerTest {
     @Test
     public void testConstructor() {
         try {
-            MessageHandler fixture = new MessageHandler(null) {
+            new MessageHandler(null) {
 
                 @Override
                 public void handle(Message message) {
