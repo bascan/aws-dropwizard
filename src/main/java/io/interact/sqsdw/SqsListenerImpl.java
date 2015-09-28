@@ -30,6 +30,11 @@ public class SqsListenerImpl implements SqsListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqsListenerImpl.class);
 
+    /**
+     * SQS message receiver flag that indicates all message attributes should be returned
+     */
+    private static final String ATTR_ALL = "All";
+
     private final AtomicBoolean healthy = new AtomicBoolean(true);
     private final AmazonSQS sqs;
     private final String sqsListenQueueUrl;
@@ -69,7 +74,7 @@ public class SqsListenerImpl implements SqsListener {
                 while (!isInterrupted()) {
                     try {
                         ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(sqsListenQueueUrl)
-                                .withMessageAttributeNames(MessageHandler.ATTR_MESSAGE_TYPE);
+                                .withMessageAttributeNames(ATTR_ALL);
                         List<Message> messages = sqs.receiveMessage(receiveMessageRequest).getMessages();
                         for (int i = 0; i < messages.size(); i++) {
                             Message msg = messages.get(i);
