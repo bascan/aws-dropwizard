@@ -68,6 +68,11 @@ uploadArchives {
               id 'bascan'
               name 'Bas Cancrinus'
             }
+            
+            developer {
+              id 'plevie'
+              name 'Patrick Levie'
+            }
           }
         }
       }
