@@ -1,5 +1,8 @@
 package io.interact.sqsdw;
 
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 
@@ -13,6 +16,10 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import static com.amazonaws.regions.Regions.DEFAULT_REGION;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Builds a managed {@link AmazonSQS} instance.
@@ -35,9 +42,12 @@ public class SqsFactory {
     @JsonProperty
     private String awsRegion;
 
+    @JsonIgnore
+    private AmazonSQS sqs;
+
     /**
      * Builds an {@link AmazonSQS} instance that is managed by the server's
-     * lifecycle.
+     * lifecycle. Reference: http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html
      * 
      * @param env
      *            The environment where the {@link AmazonSQS} will be
@@ -47,22 +57,14 @@ public class SqsFactory {
     public AmazonSQS build(Environment env) {
         LOG.info("Initialize Amazon SQS entry point");
 
-        AWSCredentials credentials = new AWSCredentials() {
+        if (isEmpty(awsAccessKeyId) || isEmpty(awsSecretKey)) {
+            sqs = new AmazonSQSClient(new DefaultAWSCredentialsProviderChain());
+        } else {
+            sqs = new AmazonSQSClient(new BasicAWSCredentials(awsAccessKeyId, awsSecretKey));
+        }
 
-            @Override
-            public String getAWSSecretKey() {
-                return awsSecretKey;
-            }
-
-            @Override
-            public String getAWSAccessKeyId() {
-                return awsAccessKeyId;
-            }
-        };
-
-        final AmazonSQS sqs = new AmazonSQSClient(credentials);
-        Region region = Region.getRegion(Regions.fromName(awsRegion));
-        sqs.setRegion(region);
+        final Regions regions = isNotEmpty(awsRegion) ? Regions.fromName(awsRegion) : DEFAULT_REGION;
+        sqs.setRegion(Region.getRegion(regions));
 
         env.lifecycle().manage(new Managed() {
 
