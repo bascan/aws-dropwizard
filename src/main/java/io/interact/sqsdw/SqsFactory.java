@@ -2,20 +2,16 @@ package io.interact.sqsdw;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.setup.Environment;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.setup.Environment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.amazonaws.regions.Regions.DEFAULT_REGION;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -30,15 +26,12 @@ public class SqsFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(SqsFactory.class);
 
-    @NotEmpty
     @JsonProperty
     private String awsAccessKeyId;
 
-    @NotEmpty
     @JsonProperty
     private String awsSecretKey;
 
-    @NotEmpty
     @JsonProperty
     private String awsRegion;
 
