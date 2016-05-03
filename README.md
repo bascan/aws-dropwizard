@@ -1,5 +1,7 @@
 # sqs-dropwizard
-Latest release on Maven Central: <http://search.maven.org/#browse%7C1558661453>
+You can find the latest release on Maven Central: <http://search.maven.org> under:
+- Group ID: ``io.interact``
+- Artifact ID: ``sqs-dropwizard``
 
 ## Introduction
 
