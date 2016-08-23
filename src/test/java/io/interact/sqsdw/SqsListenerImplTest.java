@@ -2,6 +2,7 @@ package io.interact.sqsdw;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -63,8 +64,7 @@ public class SqsListenerImplTest {
     public void testLifecycleUnhealthy() throws Exception {
         LOG.debug("testLifecycleUnhealthy()...");
 
-        ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(TEST_QUEUE_URL);
-        when(sqs.receiveMessage(receiveMessageRequest)).thenThrow(new AmazonClientException(TEST_QUEUE_URL));
+        when(sqs.receiveMessage(any(ReceiveMessageRequest.class))).thenThrow(new AmazonClientException(TEST_QUEUE_URL));
 
         fixture.start();
         Thread.sleep(WAIT);
@@ -79,13 +79,10 @@ public class SqsListenerImplTest {
         List<Message> messages = new ArrayList<>();
         messages.add(new Message());
         messages.add(new Message());
-        ReceiveMessageRequest request = new ReceiveMessageRequest(TEST_QUEUE_URL)
-                .withMessageAttributeNames(MessageHandler.ATTR_MESSAGE_TYPE);
-        ;
         ReceiveMessageResult result = new ReceiveMessageResult();
         result.setMessages(messages);
 
-        when(sqs.receiveMessage(request)).thenReturn(result);
+        when(sqs.receiveMessage(any(ReceiveMessageRequest.class))).thenReturn(result);
 
         fixture.start();
         Thread.sleep(WAIT);
