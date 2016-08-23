@@ -91,7 +91,7 @@ buildscript {
 }
 
 dependencies {
-    compile 'com.amazonaws:aws-java-sdk:1.9.10'
+    compile 'com.amazonaws:aws-java-sdk-sqs:1.9.10'
     compile "io.dropwizard:dropwizard-core:${dropwizardVersion}"
     compile "io.dropwizard:dropwizard-logging:${dropwizardVersion}"
     compile "io.dropwizard:dropwizard-validation:${dropwizardVersion}"
