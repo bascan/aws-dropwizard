@@ -29,22 +29,27 @@ public class MessageDispatcher {
      *            The SQS client.
      */
     public static void dispatch(String messageBody, String queueUrl, String messageType, AmazonSQS sqs) {
-        sendMessage(messageBody, queueUrl, prepareMessageAttributes(messageType), sqs);
+        dispatchDelayed(messageBody, queueUrl, messageType, sqs, 0);
+    }
+
+    public static void dispatchDelayed(String messageBody, String queueUrl, String messageType, AmazonSQS sqs, int delaySeconds) {
+        sendMessage(messageBody, queueUrl, prepareMessageAttributes(messageType), sqs, delaySeconds);
     }
 
     private static Map<String, MessageAttributeValue> prepareMessageAttributes(String messageType) {
         Map<String, MessageAttributeValue> messageAttributes = new HashMap<>();
-        messageAttributes.put(MessageHandler.ATTR_MESSAGE_TYPE, new MessageAttributeValue().withDataType("String")
-                .withStringValue(messageType));
+        messageAttributes.put(MessageHandler.ATTR_MESSAGE_TYPE,
+                new MessageAttributeValue().withDataType("String").withStringValue(messageType));
         return messageAttributes;
     }
 
     private static void sendMessage(String messageBody, String queueUrl, Map<String, MessageAttributeValue> messageAttributes,
-            AmazonSQS sqs) {
+            AmazonSQS sqs, int delaySeconds) {
         SendMessageRequest request = new SendMessageRequest();
         request.withMessageBody(messageBody);
         request.withQueueUrl(queueUrl);
         request.withMessageAttributes(messageAttributes);
+        request.setDelaySeconds(delaySeconds);
         sqs.sendMessage(request);
     }
 
