@@ -57,7 +57,7 @@ sqsListenQueueUrl: https://sqs...
 ````java
 package ...;
 
-import io.interact.sqsdw.MessageHandler;
+import io.interact.sqsdw.sqs.MessageHandler;
 
 public class MessageHandlerImpl extends MessageHandler {
 

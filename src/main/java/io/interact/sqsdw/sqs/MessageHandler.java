@@ -1,7 +1,8 @@
-package io.interact.sqsdw;
+package io.interact.sqsdw.sqs;
 
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
+import io.interact.sqsdw.sqs.SqsListenerImpl;
 
 /**
  * Handles messages that were received by the {@link SqsListenerImpl}.

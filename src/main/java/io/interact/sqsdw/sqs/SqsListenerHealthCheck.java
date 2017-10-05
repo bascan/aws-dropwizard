@@ -1,4 +1,4 @@
-package io.interact.sqsdw;
+package io.interact.sqsdw.sqs;
 
 import com.codahale.metrics.health.HealthCheck;
 

@@ -1,10 +1,11 @@
-package io.interact.sqsdw;
+package io.interact.sqsdw.sqs;
 
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import io.interact.sqsdw.AwsFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ import com.google.inject.name.Named;
  * Listens to a queue and dispatches received messages to the supplied
  * {@link MessageHandler} implementation.
  * 
- * @see SqsFactory
+ * @see AwsFactory
  * @see SqsListenerHealthCheck
  * @author Bas Cancrinus
  */
