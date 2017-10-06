@@ -1,4 +1,4 @@
-# sqs-sns-dropwizard
+# aws-dropwizard
 You can find the latest release on Maven Central: <http://search.maven.org> under:
 - Group ID: ``io.interact``
 - Artifact ID: ``sqs-dropwizard``
@@ -80,7 +80,7 @@ public class MessageHandlerImpl extends MessageHandler {
 ````java
     @Override
     public void run(IlinkSfdcConfiguration conf, Environment env) {
-        final AmazonSQS sqs = conf.getSqsFactory().build(env);
+        final AmazonSQS sqs = conf.getSqsFactory().buildSQSClient(env);
 
         final MessageHandler handler = ...
 
@@ -102,6 +102,14 @@ MessageDispatcher.dispatch(yourData, queueUrl, "MyMessageType", sqs);
 ## SNS
 
 - You can also build an SNS client with your AwsFactory instance with the aws credentials and region specified in your config.yaml. The client will automatically be shutdown at the end of the applications lifecycle.
+
+````java
+    @Override
+    public void run(IlinkSfdcConfiguration conf, Environment env) {
+        final AmazonSNS sns = conf.getSqsFactory().buildSNSClient(env);
+    }
+````
+
 
 That's it!
 
