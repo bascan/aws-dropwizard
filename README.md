@@ -1,20 +1,20 @@
-# sqs-dropwizard
+# sqs-sns-dropwizard
 You can find the latest release on Maven Central: <http://search.maven.org> under:
 - Group ID: ``io.interact``
 - Artifact ID: ``sqs-dropwizard``
 
 ## Introduction
 
-sqs-dropwizard is a utility library that integrates the Amazon SQS offering with the Dropwizard REST framework.
+sqs-sns-dropwizard is a utility library that integrates the Amazon SQS and SNS offerings with the Dropwizard REST framework.
 It contains convenience classes for sending messages to - and receiving from - SQS queues while being managed
-by the Dropwizard framework.
+by the Dropwizard framework. It also supports creating and managing SNS clients for push notifications.
 
 ## Getting started
 - Add the following settings to your configuration yaml file:
 
 ````yaml
 # Amazon SQS settings.
-sqsFactory:
+awsFactory:
   awsAccessKeyId: ...
   awsSecretKey: ...
   awsRegion: ...
@@ -22,23 +22,23 @@ sqsFactory:
 sqsListenQueueUrl: https://sqs...
 ````
 
-- Add the SQS factory and the listen queue URL to your configuration class:
+- Add the Aws factory and the listen queue URL to your configuration class:
 
 ````java
     @Valid
     @NotNull
     @JsonProperty
-    private SqsFactory sqsFactory;
+    private AwsFactory awsFactory;
 
     @NotNull
     @JsonProperty
     private String sqsListenQueueUrl;
 
-    public SqsFactory getSqsFactory() {
+    public AwsFactory getAwsFactory() {
         return sqsFactory;
     }
 
-    public void setSqsFactory(SqsFactory sqsFactory) {
+    public void setAwsFactory(AwsFactory awsFactory) {
         this.sqsFactory = sqsFactory;
     }
 
@@ -50,6 +50,8 @@ sqsListenQueueUrl: https://sqs...
         this.sqsListenQueueUrl = sqsListenQueueUrl;
     }
 ````
+
+## SQS
 
 - Extend the MessageHandler class and process the messages that you expect to receive in the handle() method
 (you can register multiple MessageHandler instances with the queue listener):
@@ -96,6 +98,10 @@ public class MessageHandlerImpl extends MessageHandler {
 ````java
 MessageDispatcher.dispatch(yourData, queueUrl, "MyMessageType", sqs);
 ````
+
+## SNS
+
+- You can also build an SNS client with your AwsFactory instance with the aws credentials and region specified in your config.yaml. The client will automatically be shutdown at the end of the applications lifecycle.
 
 That's it!
 
