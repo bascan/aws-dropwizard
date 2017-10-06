@@ -1,5 +1,6 @@
 package io.interact.sqsdw;
 
+import com.amazonaws.AmazonWebServiceClient;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Region;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
+import io.interact.sqsdw.core.ManagedAwsClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,19 +66,7 @@ public class AwsFactory {
         final Regions regions = isNotEmpty(awsRegion) ? Regions.fromName(awsRegion) : DEFAULT_REGION;
         sqs.setRegion(Region.getRegion(regions));
 
-        env.lifecycle().manage(new Managed() {
-
-            @Override
-            public void start() {
-                // NOOP
-            }
-
-            @Override
-            public void stop() {
-                LOG.info("Shutdown Amazon SQS entry point");
-                sqs.shutdown();
-            }
-        });
+        env.lifecycle().manage(new ManagedAwsClient((AmazonWebServiceClient) sqs));
 
         return sqs;
     }
@@ -99,18 +89,7 @@ public class AwsFactory {
             sns = new AmazonSNSClient(new BasicAWSCredentials(awsAccessKeyId, awsSecretKey));
         }
 
-        env.lifecycle().manage(new Managed() {
-            @Override
-            public void start() throws Exception {
-                // NOOP
-            }
-
-            @Override
-            public void stop() throws Exception {
-                LOG.info("Shutdown Amazon SNS entry point");
-                sns.shutdown();
-            }
-        });
+        env.lifecycle().manage(new ManagedAwsClient((AmazonWebServiceClient) sns));
 
         return sns;
     }
