@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import io.interact.sqsdw.sqs.MessageHandler;
+import io.interact.sqsdw.sqs.SqsListenerImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

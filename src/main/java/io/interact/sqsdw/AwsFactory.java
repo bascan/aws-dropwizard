@@ -1,15 +1,19 @@
 package io.interact.sqsdw;
 
+import com.amazonaws.AmazonWebServiceClient;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
+import io.interact.sqsdw.core.ManagedAwsClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +26,9 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  * 
  * @author Bas Cancrinus
  */
-public class SqsFactory {
+public class AwsFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SqsFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AwsFactory.class);
 
     @JsonProperty
     private String awsAccessKeyId;
@@ -38,6 +42,9 @@ public class SqsFactory {
     @JsonIgnore
     private AmazonSQS sqs;
 
+    @JsonIgnore
+    private AmazonSNS sns;
+
     /**
      * Builds an {@link AmazonSQS} instance that is managed by the server's
      * lifecycle. Reference: http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html
@@ -47,7 +54,7 @@ public class SqsFactory {
      *            registered.
      * @return A managed instance.
      */
-    public AmazonSQS build(Environment env) {
+    public AmazonSQS buildSQSClient(Environment env) {
         LOG.info("Initialize Amazon SQS entry point");
 
         if (isEmpty(awsAccessKeyId) || isEmpty(awsSecretKey)) {
@@ -59,21 +66,32 @@ public class SqsFactory {
         final Regions regions = isNotEmpty(awsRegion) ? Regions.fromName(awsRegion) : DEFAULT_REGION;
         sqs.setRegion(Region.getRegion(regions));
 
-        env.lifecycle().manage(new Managed() {
-
-            @Override
-            public void start() {
-                // NOOP
-            }
-
-            @Override
-            public void stop() {
-                LOG.info("Shutdown Amazon SQS entry point");
-                sqs.shutdown();
-            }
-        });
+        env.lifecycle().manage(new ManagedAwsClient((AmazonWebServiceClient) sqs));
 
         return sqs;
+    }
+
+    /**
+     * Builds an {@link AmazonSNS} instance that is managed by the server's
+     * lifecycle. Reference: http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html
+     *
+     * @param env
+     *            The environment where the {@link AmazonSNS} will be
+     *            registered.
+     * @return A managed instance.
+     */
+    public AmazonSNS buildSNSClient(Environment env) {
+        LOG.info("Initialize AMAZON SNS entry point");
+
+        if (isEmpty(awsAccessKeyId) || isEmpty(awsSecretKey)) {
+            sns = new AmazonSNSClient(new DefaultAWSCredentialsProviderChain());
+        } else {
+            sns = new AmazonSNSClient(new BasicAWSCredentials(awsAccessKeyId, awsSecretKey));
+        }
+
+        env.lifecycle().manage(new ManagedAwsClient((AmazonWebServiceClient) sns));
+
+        return sns;
     }
 
     // Getters and setters.

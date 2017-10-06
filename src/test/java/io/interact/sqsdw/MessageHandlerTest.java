@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.interact.sqsdw.sqs.MessageHandler;
 import org.junit.Test;
 
 import com.amazonaws.services.sqs.model.Message;
