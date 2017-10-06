@@ -114,6 +114,8 @@ You'll now have an extra health check called "SqsListener" that monitors the hea
     @Override
     public void run(IlinkSfdcConfiguration conf, Environment env) {
         final AmazonSNS sns = conf.getSqsFactory().buildSNSClient(env);
+        sns.publish("arn", "hello world");
+   
     }
 ````
 
