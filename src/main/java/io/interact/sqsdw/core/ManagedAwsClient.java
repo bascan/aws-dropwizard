@@ -2,7 +2,6 @@ package io.interact.sqsdw.core;
 
 import com.amazonaws.AmazonWebServiceClient;
 import io.dropwizard.lifecycle.Managed;
-import io.interact.sqsdw.AwsFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +10,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ManagedAwsClient implements Managed {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AwsFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ManagedAwsClient.class);
 
     private AmazonWebServiceClient awsClient;
 
@@ -36,5 +35,5 @@ public class ManagedAwsClient implements Managed {
         LOG.info("Shutting down aws client, " + awsClient.getClass());
         awsClient.shutdown();
     }
-    
+
 }
