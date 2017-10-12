@@ -11,7 +11,6 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.interact.sqsdw.core.ManagedAwsClient;
 import org.slf4j.Logger;
