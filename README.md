@@ -5,7 +5,7 @@ You can find the latest release on Maven Central: <http://search.maven.org> unde
 
 ## Introduction
 
-sqs-sns-dropwizard is a utility library that integrates the Amazon SQS and SNS offerings with the Dropwizard REST framework.
+aws-dropwizard is a utility library that integrates the Amazon SQS and SNS offerings with the Dropwizard REST framework.
 It contains convenience classes for sending messages to - and receiving from - SQS queues while being managed
 by the Dropwizard framework. It also supports creating and managing SNS clients for push notifications.
 
