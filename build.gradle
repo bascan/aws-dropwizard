@@ -47,7 +47,7 @@ uploadArchives {
         pom.project {
           name 'sqs-dropwizard'
           packaging 'jar'
-          description 'sqs-dropwizard is a utility library that integrates the Amazon SQS offering with the Dropwizard REST framework. It contains convenience classes for sending messages to - and receiving from - SQS queues while being managed by the Dropwizard framework.'
+          description 'aws-dropwizard is a utility library that integrates the Amazon SQS and SNS offerings with the Dropwizard REST framework. It contains convenience classes for sending messages to - and receiving from - SQS queues while being managed by the Dropwizard framework.'
           url 'https://github.com/bascan/sqs-dropwizard'
   
           scm {
@@ -91,8 +91,8 @@ buildscript {
 }
 
 dependencies {
-    compile 'com.amazonaws:aws-java-sdk-sns:1.11.194'
-    compile 'com.amazonaws:aws-java-sdk-sqs:1.9.10'
+    compile 'com.amazonaws:aws-java-sdk-sns:1.11.212'
+    compile 'com.amazonaws:aws-java-sdk-sqs:1.11.212'
     compile "io.dropwizard:dropwizard-core:${dropwizardVersion}"
     compile "io.dropwizard:dropwizard-logging:${dropwizardVersion}"
     compile "io.dropwizard:dropwizard-validation:${dropwizardVersion}"
