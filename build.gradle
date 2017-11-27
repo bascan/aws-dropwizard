@@ -26,10 +26,7 @@ targetCompatibility = 1.7
 
 group = "io.interact"
 archivesBaseName = "sqs-dropwizard"
-version = '1.0.5'
-
-def ossrhUsername = hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
-def ossrhPassword = hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+version = '1.0.6'
 
 uploadArchives {
     repositories {
