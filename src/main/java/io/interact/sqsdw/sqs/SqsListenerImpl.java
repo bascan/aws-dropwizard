@@ -86,18 +86,19 @@ public class SqsListenerImpl implements SqsListener {
                                     if (handler.canHandle(msg)) {
                                         LOG.debug("Message accepted.");
                                         handler.handle(msg);
+                                        String messageRecieptHandle = msg.getReceiptHandle();
+                                        sqs.deleteMessage(new DeleteMessageRequest(sqsListenQueueUrl, messageRecieptHandle));
+                                        LOG.debug(String.format("Message %s of %s is processed and deleted from queue '%s'", i + 1,
+                                                messages.size(), sqsListenQueueUrl));
                                     } else {
                                         LOG.debug("Message refused.");
                                     }
                                 }
+
                             } catch (Exception e) {
                                 logProcessingError(msg, e);
                             }
 
-                            String messageRecieptHandle = msg.getReceiptHandle();
-                            sqs.deleteMessage(new DeleteMessageRequest(sqsListenQueueUrl, messageRecieptHandle));
-                            LOG.debug(String.format("Message %s of %s is processed and deleted from queue '%s'", i + 1,
-                                    messages.size(), sqsListenQueueUrl));
                         }
 
                         boolean recovered = healthy.compareAndSet(false, true);
