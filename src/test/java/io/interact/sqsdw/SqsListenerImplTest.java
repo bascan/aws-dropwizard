@@ -3,13 +3,14 @@ package io.interact.sqsdw;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import io.interact.sqsdw.sqs.MessageHandler;
 import io.interact.sqsdw.sqs.SqsListenerImpl;
 import org.junit.Before;
@@ -90,5 +91,68 @@ public class SqsListenerImplTest {
         Thread.sleep(WAIT);
         assertTrue(fixture.isHealthy());
         fixture.stop();
+    }
+
+    @Test
+    public void testDoesNotDeleteMessagesIfHandlerThrowsException() throws Exception {
+        LOG.debug("testDoesNotDeleteMessagesIfHandlerThrowsException()...");
+
+        List<Message> messages = new ArrayList<>();
+        messages.add(new Message());
+        messages.add(new Message());
+        ReceiveMessageResult result = new ReceiveMessageResult();
+        result.setMessages(messages);
+
+        when(sqs.receiveMessage(any(ReceiveMessageRequest.class))).thenReturn(result);
+
+        when(handler.canHandle(any(Message.class))).thenReturn(true);
+
+        doThrow(new RuntimeException("should prevent message being deleted")).when(handler).handle(any(Message.class));
+
+        fixture.start();
+        Thread.sleep(WAIT);
+        fixture.stop();
+
+        verify(sqs, never()).deleteMessage(any(DeleteMessageRequest.class));
+    }
+
+    @Test
+    public void testDoesNotDeleteMessagesIfHandlerCannotProcess() throws Exception {
+        LOG.debug("testDoesNotDeleteMessagesIfHandlerCannotProcess()...");
+
+        List<Message> messages = new ArrayList<>();
+        messages.add(new Message());
+        messages.add(new Message());
+        ReceiveMessageResult result = new ReceiveMessageResult();
+        result.setMessages(messages);
+
+        when(sqs.receiveMessage(any(ReceiveMessageRequest.class))).thenReturn(result);
+
+        fixture.start();
+        Thread.sleep(WAIT);
+        fixture.stop();
+
+        verify(sqs, never()).deleteMessage(any(DeleteMessageRequest.class));
+    }
+
+    @Test
+    public void testDeletesMessagesIfHandlerProcessesOK() throws Exception {
+        LOG.debug("testDeletesMessagesIfHandlerProcessesOK()...");
+
+        List<Message> messages = new ArrayList<>();
+        messages.add(new Message());
+        messages.add(new Message());
+        ReceiveMessageResult result = new ReceiveMessageResult();
+        result.setMessages(messages);
+
+        when(handler.canHandle(any(Message.class))).thenReturn(true);
+
+        when(sqs.receiveMessage(any(ReceiveMessageRequest.class))).thenReturn(result);
+
+        fixture.start();
+        Thread.sleep(WAIT);
+        fixture.stop();
+
+        verify(sqs, atLeastOnce()).deleteMessage(any(DeleteMessageRequest.class));
     }
 }
